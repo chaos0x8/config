@@ -30,7 +30,9 @@ module Pipe
 
 private
   def self.overrideLinesByCommand(command, *args, _beg_:, _end_:, indent:, **opts)
-    result, st = Open3.capture2e(command, *args, **opts)
+    out, err, st = Open3.capture3(command, *args, **opts)
+
+    result = st.exitstatus == 0 ? out : err
     result = result.split("\n").collect { |line|
       if indent
         Common::indent(line, level: Common::indentLevel(_beg_))
