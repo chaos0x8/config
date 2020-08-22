@@ -15,10 +15,7 @@ module ToggleHppCpp
     def openTab currentFile
       patern = _reversedPatern(currentFile)
 
-      glob = "#{ENV['NRV_SYSTEM_GIT_ROOT']}/**/*"
-      files = Dir[glob].reject { |fn|
-        fn.match('/_out/')
-      }.select { |fn|
+      files = Dir["#{File.dirname(currentFile)}/*"].select { |fn|
         File.basename(fn).match(patern)
       }.to_a
 
@@ -88,8 +85,7 @@ module ToggleHppCpp
     end
 
     def _noExt fn
-      fn = File.basename(fn)
-      fn[0..-File.extname(fn).size-1]
+      File.basename(fn).chomp(File.extname(fn))
     end
   end
 
