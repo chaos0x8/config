@@ -58,18 +58,6 @@ private
 end
 RUBY
 
-function! EvalRuby(command)
-ruby << RUBY
-  eval(VIM::evaluate('a:command'))
-RUBY
-endfunction
-
-function! EvalRubyRange(command) range
-ruby << RUBY
-  eval(VIM::evaluate('a:command'))
-RUBY
-endfunction
-
 function! VimEvalTags()
   redir => l:cmdResult
   exec 'silent set tags?'

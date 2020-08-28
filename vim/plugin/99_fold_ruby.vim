@@ -91,4 +91,4 @@ module Fold
 end
 RUBY
 
-au! Syntax ruby call EvalRuby('Fold::Ruby::exec')
+au! Syntax ruby call C8_ruby('Fold::Ruby::exec')

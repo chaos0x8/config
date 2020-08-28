@@ -7,9 +7,7 @@ let g:is_f5_loaded = 1
 ruby << RUBY
 module F5
   def self.exec
-    fn = VIM::evaluate('expand("%:p")')
-
-    if File::exists?(fn)
+    if fn = C8.__file__
       saveAs(currentContent, CURRENT)
 
       VIM::command(':earlier 1f')
@@ -62,5 +60,5 @@ private
 end
 RUBY
 
-nnoremap <F5> :call EvalRuby('F5::exec')<CR>
-nnoremap <C-F5> :call EvalRuby('F5::reloadFile')<CR>
+nnoremap <F5> :call C8_ruby('F5::exec')<CR>
+nnoremap <C-F5> :call C8_ruby('F5::reloadFile')<CR>

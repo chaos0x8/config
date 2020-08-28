@@ -19,14 +19,15 @@ module FindTags
   end
 
   def self.exec
-    dir = VIM.evaluate('expand("%:p")')
-    dir = File.dirname(dir) unless File.directory? dir
+    if dir = C8.__file__
+      dir = File.dirname(dir) unless File.directory? dir
 
-    tags = FindTags.findIn dir
-    VIM.command "set tags=#{Shellwords.shellescape(tags)}" if tags
+      tags = FindTags.findIn dir
+      VIM.command "set tags=#{Shellwords.shellescape(tags)}" if tags
+    end
   end
 end
 RUBY
 
-com! FindTags :call EvalRuby('FindTags::exec')
+com! FindTags :call C8_ruby('FindTags::exec')
 execute ':FindTags'

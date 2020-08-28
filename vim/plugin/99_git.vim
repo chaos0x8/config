@@ -49,11 +49,11 @@ private
     git_blame_file = VIM.evaluate('g:git_blame_file')
     return git_blame_file unless git_blame_file.empty?
 
-    file = VIM.evaluate('expand("%:p")')
+    file = C8.__file__
   end
 
   def cword
-    VIM::evaluate('expand("<cword>")')
+    C8.__cword__
   end
 
   def line_number

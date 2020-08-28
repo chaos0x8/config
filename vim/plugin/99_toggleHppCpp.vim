@@ -44,24 +44,22 @@ module ToggleHppCpp
       tabnr = VIM.evaluate 'tabpagenr()'
 
       begin
-        VIM::Window.count.times do |i|
-          win = VIM::Window[i]
+        C8.eachWindow { |win|
           if win.buffer.name and File.basename(win.buffer.name).match(patern)
             VIM.command "execute \"normal #{i+1}\\<c-w>\\<c-w>\""
             return true
           end
-        end
+        }
 
         VIM.command 'tabnext'
       end until tabnr == VIM.evaluate('tabpagenr()')
 
-      VIM::Buffer.count.times do |i|
-        buf = VIM::Buffer[i]
+      C8.eachBuffer { |buf|
         if buf.name and File.basename(buf.name).match(patern)
           VIM.command "b #{buf.number}"
           return true
         end
-      end
+      }
 
       false
     end
@@ -90,23 +88,23 @@ module ToggleHppCpp
   end
 
   def self.exec
-    file = VIM.evaluate 'expand("%:p")'
+    if file = C8.__file__
+      begin
+        app = Script.new
 
-    begin
-      app = Script.new
-
-      unless app.switchTab(file)
-        app.openTab(file)
+        unless app.switchTab(file)
+          app.openTab(file)
+        end
+      rescue RuntimeError => e
+        print "#{e}\n"
+        print e.backtrace.join("\n")
+      rescue Exception => e
+        print "#{e}\n"
+        print e.backtrace.join("\n")
       end
-    rescue RuntimeError => e
-      print "#{e}\n"
-      print e.backtrace.join("\n")
-    rescue Exception => e
-      print "#{e}\n"
-      print e.backtrace.join("\n")
     end
   end
 end
 RUBY
 
-nnoremap <F4> :call EvalRuby('ToggleHppCpp::exec')<CR>
+nnoremap <F4> :call C8_ruby('ToggleHppCpp::exec')<CR>

@@ -17,7 +17,7 @@ module FormatCpp
   def self.fileName mode
     case mode
     when :current
-      Vim::evaluate('expand("%:p")')
+      C8.__file__
     else
       File.join(ENV['HOME'], 'dummy.cpp')
     end

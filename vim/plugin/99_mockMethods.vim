@@ -138,4 +138,4 @@ module MockMethods
 end
 RUBY
 
-vnoremap <leader>m :call EvalRubyRange('MockMethods::exec')<CR>
+vnoremap <leader>m :call C8_rubyRange('MockMethods::exec')<CR>

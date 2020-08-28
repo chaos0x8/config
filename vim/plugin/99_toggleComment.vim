@@ -14,13 +14,15 @@ module ToggleComment
 
 private
   def self.commentCharacter
-    case VIM::evaluate('expand("%:e")')
-    when 'cpp', 'hpp', 'c', 'h', 'ttcn3', 'cs'
-      com = '//'
-    when 'rb', 'py'
-      com = '#'
-    when 'vim'
-      com = '"'
+    if file = C8.__file__
+      case File.extname(file)
+      when '.cpp', '.hpp', '.c', '.h', '.ttcn3', '.cs'
+        com = '//'
+      when '.rb', '.py'
+        com = '#'
+      when '.vim'
+        com = '"'
+      end
     end
   end
 
@@ -36,5 +38,5 @@ private
 end
 RUBY
 
-vnoremap <C-C> :call EvalRuby('ToggleComment::exec')<CR>
-nnoremap <C-C> :call EvalRuby('ToggleComment::exec')<CR>
+vnoremap <C-C> :call C8_ruby('ToggleComment::exec')<CR>
+nnoremap <C-C> :call C8_ruby('ToggleComment::exec')<CR>

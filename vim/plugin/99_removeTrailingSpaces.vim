@@ -6,12 +6,15 @@ let g:is_remove_trailing_spaces_loaded = 1
 
 function! PreventTrailRemoval()
 ruby << RUBY
-  fn = VIM::evaluate('expand("%:p")')
-  case File.extname(fn)
-  when '.md'
-    VIM::command('let b:is_remove_trailing_spaces_loaded_prevent=1')
+  if fn = C8.__file__
+    case File.extname(fn)
+    when '.md'
+      VIM::command('let b:is_remove_trailing_spaces_loaded_prevent=1')
+    else
+      VIM::command('let b:is_remove_trailing_spaces_loaded_prevent=0')
+    end
   else
-    VIM::command('let b:is_remove_trailing_spaces_loaded_prevent=0')
+    VIM::command('let b:is_remove_trailing_spaces_loaded_prevent=1')
   end
 RUBY
 endfunction
