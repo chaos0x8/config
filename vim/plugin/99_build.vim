@@ -52,7 +52,7 @@ module C8
     def self.handleBuildResult out:, st:
       if st.exitstatus != 0
         errors = out.each_line(chomp: true).collect { |line|
-          if m = line.match(/^(.+?):(\d+):(\d+):\s+(error:.*)$/)
+          if m = line.match(/^(.+?):(\d+):(\d+):\s+(fatal error:.*|error:.*)$/)
             C8::Build.handleError(file: m[1], line: m[2], col: m[3], error: m[4])
           end
         }.compact

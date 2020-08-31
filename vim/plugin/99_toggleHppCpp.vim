@@ -44,7 +44,7 @@ module ToggleHppCpp
       tabnr = VIM.evaluate 'tabpagenr()'
 
       begin
-        C8.eachWindow { |win|
+        C8.eachWindow.each_with_index { |win, i|
           if win.buffer.name and File.basename(win.buffer.name).match(patern)
             VIM.command "execute \"normal #{i+1}\\<c-w>\\<c-w>\""
             return true
