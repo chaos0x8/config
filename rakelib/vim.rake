@@ -5,7 +5,7 @@ namespace(:vim) {
   }
 
   vimrc = GeneratedFile.new { |t|
-    t.name = "#{ENV['HOME']}/.vimrc"
+    t.name = File.join(ENV['HOME'], '.vimrc')
     t.requirements << 'vimrc'
     t.action = proc { |dst, src|
       FileUtils.cp src, dst, verbose: true
@@ -13,7 +13,7 @@ namespace(:vim) {
   }
 
   pathogen = GeneratedFile.new { |t|
-    t.name = "#{ENV['HOME']}/.vim/vim-pathogen"
+    t.name = File.join(ENV['HOME'], '.vim', 'vim-pathogen')
     t.action = proc { |dst|
       Dir.chdir(File.dirname(dst)) {
         sh 'git', 'clone', 'https://github.com/tpope/vim-pathogen.git'
@@ -22,7 +22,7 @@ namespace(:vim) {
   }
 
   autol = GeneratedFile.new { |t|
-    t.name = "#{ENV['HOME']}/.vim/autoload/pathogen.vim"
+    t.name = File.join(ENV['HOME'], '.vim', 'autoload', 'pathogen.vim')
     t.requirements << pathogen
     t.action = proc { |dst, src|
       FileUtils.ln_s File.expand_path(File.join(src, 'autoload/pathogen.vim')), dst, verbose: true
@@ -31,7 +31,7 @@ namespace(:vim) {
 
   syntax = Dir['vim/syntax/*'].collect { |fn|
     GeneratedFile.new { |t|
-      t.name = "#{ENV['HOME']}/.vim/syntax/#{File.basename(fn)}"
+      t.name = File.join(ENV['HOME'], '.vim', 'syntax', File.basename(fn))
       t.requirements << fn
       t.action = proc { |dst, src|
         FileUtils.cp src, dst, verbose: true
@@ -42,7 +42,7 @@ namespace(:vim) {
   bundleList = ['https://github.com/mileszs/ack.vim.git', 'https://github.com/scrooloose/nerdtree.git']
   bundle = bundleList.collect { |uri|
     GeneratedFile.new { |t|
-      t.name = "#{ENV['HOME']}/.vim/bundle/#{File.basename(uri).chomp('.git')}"
+      t.name = File.join(ENV['HOME'], '.vim', 'bundle', File.basename(uri).chomp('.git'))
       t.action = proc { |fn|
         Dir.chdir(File.dirname(fn)) {
           sh 'git', 'clone', uri
@@ -53,7 +53,7 @@ namespace(:vim) {
 
   plugin = Dir['vim/plugin/*'].collect { |fn|
     GeneratedFile.new { |t|
-      t.name = "#{ENV['HOME']}/.vim/plugin/#{File.basename(fn)}"
+      t.name = File.join(ENV['HOME'], '.vim', 'plugin', File.basename(fn))
       t.requirements << fn
       t.action = proc { |dst, src|
         FileUtils.cp src, dst, verbose: true
@@ -62,8 +62,8 @@ namespace(:vim) {
   }
 
   C8.task('plugin-remove-old') {
-    Dir["#{ENV['HOME']}/.vim/plugin/*"].each { |fn|
-      if Dir["vim/plugin/#{File.basename(fn)}"].size == 0
+    Dir[File.join(ENV['HOME'], '.vim', 'plugin', '*')].each { |fn|
+      if Dir[File.join('vim', 'plugin', File.basename(fn))].size == 0
         FileUtils.rm fn, verbose: true
       end
     }
