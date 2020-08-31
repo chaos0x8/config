@@ -12,6 +12,10 @@ HISTCONTROL=ignoreboth:erasedups
 shopt -s histappend
 
 if [ -d "$HOME/bin" ]; then
+  if [ -f "$HOME/bin/bashrc" ]; then
+    source "$HOME/bin/bashrc"
+  fi
+
   export PATH="$HOME/bin:$PATH"
 fi
 
