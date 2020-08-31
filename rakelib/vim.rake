@@ -61,9 +61,17 @@ namespace(:vim) {
     }
   }
 
+  C8.task('remove-old-plugin') {
+    Dir["#{ENV['HOME']}/.vim/plugin/*"].each { |fn|
+      if Dir["vim/plugin/#{File.basename(fn)}"].size == 0
+        FileUtils.rm fn, verbose: true
+      end
+    }
+  }
+
   C8.task(bundle: Names[bundle, pathogen])
   C8.multitask(plugin: Names[vimrc, syntax, plugin, autol])
 
   desc 'Installs vim configuration'
-  C8.task(install: Names[pkgs, 'vim:bundle', 'vim:plugin'])
+  C8.task(install: Names[pkgs, 'vim:remove-old-plugin', 'vim:bundle', 'vim:plugin'])
 }
