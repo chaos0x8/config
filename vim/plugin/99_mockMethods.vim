@@ -44,9 +44,9 @@ module MockMethods
     returnData = m[m.size-2]
     methodName = m[m.size-1]
 
-    parameters = splitParameters(input.match(/\((.*)\)/)[1])
+    parameters = splitParameters(input.match(/\((.*)\)/)[1]).join(', ')
 
-    "#{macroType(input)}#{parameters.size}(#{methodName}, #{returnType(returnData)}(#{join(parameters)}));".squeeze(' ')
+    "MOCK_METHOD(#{returnType(returnData)}, #{methodName}, (#{parameters}), (#{options(input)}));".squeeze(' ')
   end
 
   def self.splitParameters text
@@ -104,10 +104,6 @@ module MockMethods
     [ result, text.index(',', it) || text.size ]
   end
 
-  def self.join args
-    args.join(', ')
-  end
-
   def self.returnType returnData
     if m = returnData.match(/virtual (.*)/)
       returnData = m[1].strip
@@ -118,11 +114,12 @@ module MockMethods
     returnData.strip
   end
 
-  def self.macroType input
+  def self.options input
     if input.match(/([\w:&\*<> ]+\s+)(\w+)\(.*\)\s*const/)
-      return 'MOCK_CONST_METHOD'
-    end
-    'MOCK_METHOD'
+      ['const', 'override']
+    else
+      ['override']
+    end.join(', ')
   end
 
   def self.exec

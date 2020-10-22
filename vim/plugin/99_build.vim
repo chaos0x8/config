@@ -16,7 +16,7 @@ module C8
       col = col.to_i
 
       if File.exist?(file) and File.writable?(file)
-        VIM.command "badd #{Shellwords.escape(file)}"
+        Vim.command "badd #{Shellwords.escape(file)}"
 
         C8.eachBuffer { |buffer|
           if buffer.name and File.expand_path(buffer.name) == file
@@ -26,19 +26,15 @@ module C8
       end
 
       nil
-    rescue Exception => e
-      print e
-      print e.backtrace.join("\n")
-      nil
     end
 
     def self.goto error
-      cW = VIM::Window.current
+      cW = Vim::Window.current
       cB = cW.buffer
 
       if cB.name
         if cB.number != error['bufnr']
-          VIM.command "silent b #{error['bufnr']}"
+          Vim.command "silent b #{error['bufnr']}"
         end
 
         cW.cursor = [error['lnum'], error['col']-1]
@@ -67,10 +63,6 @@ module C8
         Vim.command('cclose')
         print 'Compiled OK'
       end
-    rescue Exception => e
-      print e
-      print e.backtrace.join("\n")
-      nil
     end
 
     def self.rake
