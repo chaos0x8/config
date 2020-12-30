@@ -45,7 +45,7 @@ module Fold
     end
 
     def _execFoldTests folder
-      words = ['context', 'with', 'setup', 'teardown', 'should']
+      words = ['describe', 'context', 'before', 'after', 'it']
 
       cB = VIM::Buffer.current
 
@@ -61,19 +61,22 @@ module Fold
         end
 
         if _beg
-          if c = cB[it].count('{') and c > 0
+          if c = cB[it].count('{') + cB[it].count('(') and c > 0
             _brackets ||= 0
             _brackets += c
           end
 
           if _brackets
-            if c = cB[it].count('}') and c > 0
+            if c = cB[it].count('}') + cB[it].count(')') and c > 0
               _brackets -= c
             end
 
             if _brackets == 0
-              unfold = ['context', 'with'].include?(_word)
-              folder.add(_beg, it, open: unfold)
+              range = it - _beg
+              if range > 0
+                unfold = range < 5 || ['describe'].include?(_word)
+                folder.add(_beg, it, open: unfold) if range > 0
+              end
               it = _beg
               _beg, _brackets, _word = nil, nil, nil
             end
