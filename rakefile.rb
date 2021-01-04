@@ -1,4 +1,4 @@
-gem 'rake-builder', '~> 2.0', '>= 2.0.8'
+gem 'rake-builder', '~> 3.2', '>= 3.2.6'
 
 require 'rake-builder'
 require 'rake/testtask'
