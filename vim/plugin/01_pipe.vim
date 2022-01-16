@@ -6,11 +6,11 @@ let g:is_pipe_loaded = 1
 
 ruby << RUBY
 module Pipe
-  def self.system(command, *args, indent: true, **opts)
+  def self.system(command, *args, ignore_error: false, indent: true, **opts)
     require 'open3'
 
     overrideLinesByCommand(
-      command, *args, indent: indent, **opts)
+      command, *args, ignore_error: ignore_error, indent: indent, **opts)
   end
 
   def self.current
@@ -29,10 +29,15 @@ module Pipe
   end
 
 private
-  def self.overrideLinesByCommand(command, *args, _beg_:, _end_:, indent:, **opts)
+  def self.overrideLinesByCommand(command, *args, _beg_:, _end_:, ignore_error:, indent:, **opts)
     out, err, st = Open3.capture3(command, *args, **opts)
 
-    result = st.exitstatus == 0 ? out : err
+    result = out
+
+    if st.exitstatus != 0
+      result = err unless ignore_error && !result.empty?
+    end
+
     result = result.split("\n").collect { |line|
       if indent
         Common::indent(line, level: Common::indentLevel(_beg_))
@@ -66,3 +71,8 @@ ruby << RUBY
 RUBY
 endfunction
 
+function! PipeAllIgnoreError(rubyEval) range
+ruby << RUBY
+  Pipe::system(*eval(VIM::evaluate('a:rubyEval')), ignore_error: true, **Pipe::all)
+RUBY
+endfunction

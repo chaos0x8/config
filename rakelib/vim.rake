@@ -15,9 +15,15 @@ namespace(:vim) {
   pathogen = GeneratedFile.new { |t|
     t.name = File.join(ENV['HOME'], '.vim', 'vim-pathogen')
     t.action = proc { |dst|
-      Dir.chdir(File.dirname(dst)) {
-        sh 'git', 'clone', 'https://github.com/tpope/vim-pathogen.git'
-      }
+      if File.directory?(dst)
+        Dir.chdir(dst) do
+          sh 'git', 'pull', '-r'
+        end
+      else
+        Dir.chdir(File.dirname(dst)) {
+          sh 'git', 'clone', 'https://github.com/tpope/vim-pathogen.git'
+        }
+      end
     }
   }
 
@@ -25,7 +31,11 @@ namespace(:vim) {
     t.name = File.join(ENV['HOME'], '.vim', 'autoload', 'pathogen.vim')
     t.requirements << pathogen
     t.action = proc { |dst, src|
-      FileUtils.ln_s File.expand_path(File.join(src, 'autoload/pathogen.vim')), dst, verbose: true
+      if File.exist? dst
+        FileUtils.touch dst
+      else
+        FileUtils.ln_s File.expand_path(File.join(src, 'autoload/pathogen.vim')), dst, verbose: true
+      end
     }
   }
 
@@ -44,9 +54,15 @@ namespace(:vim) {
     GeneratedFile.new { |t|
       t.name = File.join(ENV['HOME'], '.vim', 'bundle', File.basename(uri).chomp('.git'))
       t.action = proc { |fn|
-        Dir.chdir(File.dirname(fn)) {
-          sh 'git', 'clone', uri
-        }
+        if File.directory?(fn)
+          Dir.chdir(fn) do
+            sh 'git', 'pull', '-r'
+          end
+        else
+          Dir.chdir(File.dirname(fn)) {
+            sh 'git', 'clone', uri
+          }
+        end
       }
     }
   }
