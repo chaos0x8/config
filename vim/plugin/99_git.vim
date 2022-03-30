@@ -41,6 +41,8 @@ class Git
   end
 
   def compare
+    old_window = $curwin
+
     if file = C8.file_git_relative
       syntax = C8.__syntax__
       VIM.command "diffthis"
@@ -48,6 +50,7 @@ class Git
       VIM.command "read !git show origin/master:#{file}"
       VIM.command "set syntax=#{syntax}" if syntax
       VIM.command "diffthis"
+      C8.next_window until $curwin == old_window
     end
   end
 

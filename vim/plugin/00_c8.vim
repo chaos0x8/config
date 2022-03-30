@@ -24,6 +24,18 @@ module C8
     }.each(&block)
   end
 
+  def self.window_index
+    Vim::Window.count.times do |i|
+      return i if $curwin == Vim::Window[i]
+    end
+
+    nil
+  end
+
+  def self.next_window
+    Vim.command "execute \"normal \\<c-w>\\<c-w>\""
+  end
+
   def self.escape data
     if data.kind_of? Hash
       "{#{data.collect { |k, v| "#{C8.escape(k)}: #{C8.escape(v)}"}.join(', ')}}"
