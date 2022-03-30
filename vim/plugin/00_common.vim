@@ -66,3 +66,10 @@ function! VimEvalTags()
   return substitute(l:cmdResult, '.*tags=\(.*\)$', '\1', '')
 endfunction
 
+function! VimEvalSyntax()
+  redir => l:cmdResult
+  exec 'silent set syntax?'
+  redir END
+
+  return substitute(l:cmdResult, '.*syntax=\(.*\)$', '\1', '')
+endfunction

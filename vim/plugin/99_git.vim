@@ -40,6 +40,17 @@ class Git
     VIM.command "silent !git log #{Shellwords.escape(file)} | vim #{cmd(file)} - -R"
   end
 
+  def compare
+    if file = C8.file_git_relative
+      syntax = C8.__syntax__
+      VIM.command "diffthis"
+      VIM.command "vnew"
+      VIM.command "read !git show origin/master:#{file}"
+      VIM.command "set syntax=#{syntax}" if syntax
+      VIM.command "diffthis"
+    end
+  end
+
 private
   def cmd fn
     "--cmd #{Shellwords.escape("let g:git_blame_file='#{fn}'")}"
@@ -96,3 +107,4 @@ com! GCurBlame :call GitRuby('curBlame')
 com! GPrevBlame :call GitRuby('prevBlame')
 com! GShow :call GitRuby('show')
 com! GLog :call GitRuby('log')
+com! GCompare :call GitRuby('compare')

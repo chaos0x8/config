@@ -5,6 +5,8 @@ endif
 let g:is_c8_loaded = 1
 
 ruby << RUBY
+require 'pathname'
+
 module C8
   def self.eachBuffer &block
     Enumerator.new { |e|
@@ -34,6 +36,20 @@ module C8
     end
   end
 
+  def self.file_git_relative
+    path = Pathname.new(__file__)
+    while parent = path.dirname and parent != path
+      if parent.join('.git').directory?
+        result = Pathname.new(__file__).relative_path_from(parent)
+        return result
+      end
+
+      path = parent
+    end
+
+    return nil
+  end
+
   def self.__file__
     fn = Vim.evaluate('expand("%:p")')
     if fn and fn.size > 0
@@ -44,6 +60,10 @@ module C8
 
   def self.__cword__
     Vim.evaluate('expand("<cword>")')
+  end
+
+  def self.__syntax__
+    Vim.evaluate('VimEvalSyntax()')
   end
 end
 RUBY
