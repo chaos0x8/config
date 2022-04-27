@@ -18,3 +18,4 @@ end
 RUBY
 
 au BufWrite *.rb call PipeAllIgnoreError('FormatRuby::args')
+au BufWrite *.rake call PipeAllIgnoreError('FormatRuby::args')
